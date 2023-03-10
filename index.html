@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Booky App</title>
+    <meta charset="utf-8" />
+    <meta viewport="device" scale="initial-width=1.0" />
+    <style>
+      body {
+	  width: 100%;
+	  padding: 2px;
+	  background-color: black;
+	  color: #eee;
+      }
+      </style>
+  </head>
+  <body>
+    <div id="entry_bar">
+      <input type="text" maxsize="30" id="the_text" value="Add your thing here" />
+      <input type="button" id="the_button" value="Add" label="Add" />
+    </div>
+    <div id="results_div">
+      <ol id="results_list">
+      </ol>
+    </div>
+  </body>
+
+  <script type="text/javascript">
+      window.document.body.onload = function(evt) {
+	  console.log("Body ready");
+	  var Button = window.document.getElementById("the_button");
+	  var Texty = window.document.getElementById("the_text");
+	  var List = window.document.getElementById("results_list");
+	  var ls_key = "booky_data";
+	  var default_txt = "Add your thing here";
+
+	  var Data = {};
+	  if (localStorage !== null) {
+	      var cache = localStorage.getItem(ls_key);
+	      if (cache !== null) {
+		  Data = JSON.parse(cache);
+	      }
+	  }
+
+	  var genFilterFunc = function(fun, index) {
+	      return function() {
+		  console.log("Trying to remove " + index);
+		  Data.items = Data.items.filter(function(e, i, a){
+		      return i != index;
+		  });
+		  fun(Data.items);
+		  return;
+	      };
+	  };
+
+	  var RenderItems = function(arr) {
+	      List.innerHTML = "";
+	      arr.forEach(function(e, i, a) {
+		  var li = document.createElement("li");
+		  var but = document.createElement("button");
+		  but.value = "-";
+		  but.label = "-";
+		  but.innerHTML = "x";
+		  but.onclick = genFilterFunc(RenderItems, i)
+		  li.innerHTML = e + " ";
+		  li.appendChild(but);
+		  List.appendChild(li);
+	      });
+	      return;
+	  };
+
+	  Texty.onfocus = function(evt) {
+	      Texty.value = "";
+	  };
+	  Texty.onblur = function(evt) {
+	      if (Texty.value == "") {
+		  Texty.value = default_txt;
+	      }
+	  };
+	  Button.onclick = function(evt) {
+	      if (Texty.value != default_txt) {
+		  if (Data.items == null) {
+		      Data.items = [];
+		  }
+		  Data.items.push(Texty.value);
+		  Data.items.sort();
+		  localStorage.setItem(ls_key, JSON.stringify(Data));
+		  RenderItems(Data.items);
+	      }
+	  };
+
+	  // draw items to screen
+	  RenderItems(Data.items);
+      };
+    </script>
+</html>
