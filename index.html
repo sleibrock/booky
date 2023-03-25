@@ -11,7 +11,7 @@
 	  background-color: black;
 	  color: #eee;
       }
-      </style>
+    </style>
   </head>
   <body>
     <div id="entry_bar">
@@ -39,6 +39,8 @@
 	      if (cache !== null) {
 		  Data = JSON.parse(cache);
 	      }
+	  } else {
+	      alert("Local Storage is not enabled, data will not save!");
 	  }
 
 	  var genFilterFunc = function(fun, index) {
@@ -91,5 +93,5 @@
 	  // draw items to screen
 	  RenderItems(Data.items);
       };
-    </script>
+  </script>
 </html>
